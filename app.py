@@ -30,7 +30,7 @@ data_dir = "data/EuroSAT"
 def download_dataset():
     if not os.path.exists("data/EuroSAT"): 
         os.makedirs("data", exist_ok=True)
-        url = "https://huggingface.co/datasets/eurosat/resolve/main/eurosat.zip"
+        url = "https://drive.google.com/file/d/1NiurPYhckTUhVzzIo4hje7DtaAkzCd2B/view?usp=drive_link"
         r = requests.get(url, stream=True)
         with open("data/eurosat.zip", 'wb') as f:
             shutil.copyfileobj(r.raw, f)
