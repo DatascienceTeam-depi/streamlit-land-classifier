@@ -14,6 +14,32 @@ from torch.utils.data import random_split
 from collections import Counter
 import numpy as np
 from torchvision import datasets
+import zipfile
+import streamlit as st
+
+@st.cache_resource
+def download_dataset_from_gdrive():
+    import gdown
+
+    file_id = "1NiurPYhckTUhVzzIo4hje7DtaAkzCd2B"
+    url = f"https://drive.google.com/uc?id={file_id}"
+    output = "dataset.zip"
+    extract_to = "data"
+
+    if not os.path.exists(extract_to):
+        st.info("Downloading dataset from Google Drive...")
+        gdown.download(url, output, quiet=False)
+
+        st.info("Extracting dataset...")
+        with zipfile.ZipFile(output, "r") as zip_ref:
+            zip_ref.extractall(extract_to)
+
+        os.remove(output)
+        st.success("Dataset is ready!")
+    else:
+        st.info("Dataset already exists.")
+
+download_dataset_from_gdrive()
 
 
 # In[3]:
