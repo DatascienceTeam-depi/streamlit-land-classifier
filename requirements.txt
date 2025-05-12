@@ -1,0 +1,16 @@
+collections
+matplotlib.pyplot
+numpy
+os
+random
+seaborn
+sklearn.decomposition
+sklearn.manifold
+sklearn.metrics
+torch
+torch.nn
+torch.optim
+torch.utils.data
+torchvision
+torchvision.datasets
+tqdm
