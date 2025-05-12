@@ -41,7 +41,6 @@ def download_dataset_from_gdrive():
 
 download_dataset_from_gdrive()
 
-
 # In[3]:
 
 
@@ -57,7 +56,21 @@ transform = transforms.Compose([
 
 from torch.utils.data import Subset
 
-full_dataset = ImageFolder(root=data_dir, transform=transform)
+full_dataset = 
+import os
+import streamlit as st
+
+# Check folder structure
+st.subheader("📁 Dataset Folder Structure")
+for root, dirs, files in os.walk("data"):
+    level = root.replace("data", "").count(os.sep)
+    indent = " " * 2 * level
+    st.text(f"{indent}{os.path.basename(root)}/")
+    subindent = " " * 2 * (level + 1)
+    for f in files:
+        st.text(f"{subindent}{f}")
+
+ImageFolder(root=data_dir, transform=transform)
 subset_indices = list(range(0, len(full_dataset),10))  # load every 10th image only
 dataset = Subset(full_dataset, subset_indices)
 class_names = full_dataset.classes  # ✔️ access from the original full dataset
