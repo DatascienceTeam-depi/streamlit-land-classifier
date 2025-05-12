@@ -42,11 +42,6 @@ def download_dataset_from_gdrive():
 download_dataset_from_gdrive()
 # In[3]:
 
-
-data_dir = r'C:\Users\Qaiaty store\Desktop\Project.github.io-main\EuroSAT'  # <- Edit this to match your local path
-
-
-
 transform = transforms.Compose([
     transforms.Resize((64, 64)),
     transforms.ToTensor(),
