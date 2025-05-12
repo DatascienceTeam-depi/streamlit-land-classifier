@@ -40,7 +40,6 @@ def download_dataset_from_gdrive():
         st.info("Dataset already exists.")
 
 download_dataset_from_gdrive()
-
 # In[3]:
 
 
@@ -56,7 +55,6 @@ transform = transforms.Compose([
 
 from torch.utils.data import Subset
 
-full_dataset = 
 import os
 import streamlit as st
 
@@ -69,8 +67,7 @@ for root, dirs, files in os.walk("data"):
     subindent = " " * 2 * (level + 1)
     for f in files:
         st.text(f"{subindent}{f}")
-
-ImageFolder(root=data_dir, transform=transform)
+full_dataset = ImageFolder(root=data_dir, transform=transform)
 subset_indices = list(range(0, len(full_dataset),10))  # load every 10th image only
 dataset = Subset(full_dataset, subset_indices)
 class_names = full_dataset.classes  # ✔️ access from the original full dataset
@@ -488,6 +485,11 @@ plt.show()
 # تقرير التصنيف
 print(classification_report(all_labels, all_preds, target_names=class_names))
 
+
+# In[19]:
+
+
+torch.save(model.state_dict(), 'eurosat_resnet18.pth')
 
 # In[19]:
 
