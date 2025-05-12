@@ -98,3 +98,4 @@ if __name__ == "__main__":
     print("Starting training...")
     train()
     print(f"Training complete. Model saved at {MODEL_PATH}")
+torch.save(model.state_dict(), 'model/resnet18_eurosat.pt')
