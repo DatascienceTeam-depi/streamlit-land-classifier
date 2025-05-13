@@ -18,7 +18,6 @@ def download_dataset_from_gdrive():
     if not os.path.exists(extract_to):
         st.info("Downloading dataset from Google Drive...")
         gdown.download(url, output, quiet=False)
-
         st.info("Extracting dataset...")
         with zipfile.ZipFile(output, "r") as zip_ref:
             zip_ref.extractall(extract_to)
@@ -48,19 +47,29 @@ def inspect_folder_structure(path="data"):
             tree.append(f"{indent}  {f}")
     return tree
 
-# 3. Load pretrained model (architecture + weights)
-@st.cache_resource
-def load_model(model_path="model.pth", num_classes=6):
-    model = models.resnet18(pretrained=False)
+# 3. Option 1: Load model from state_dict
+def load_model_option_1(model_path="model.pth", num_classes=6):
+    model = models.resnet18(pretrained=True)
     model.fc = nn.Linear(model.fc.in_features, num_classes)
     if os.path.exists(model_path):
         state_dict = torch.load(model_path, map_location=torch.device('cpu'))
         model.load_state_dict(state_dict)
-        st.success("Model loaded successfully.")
+        st.success("Model loaded successfully (Option 1).")
     else:
         st.error(f"Model file '{model_path}' not found.")
     model.eval()
     return model
+
+# 3. Option 2: Load full model directly
+def load_model_option_2(model_path="model.pth"):
+    if os.path.exists(model_path):
+        model = torch.load(model_path, map_location=torch.device('cpu'))
+        st.success("Model loaded successfully (Option 2).")
+        model.eval()
+        return model
+    else:
+        st.error(f"Model file '{model_path}' not found.")
+        return None
 
 # 4. Main Streamlit App
 def main():
@@ -70,7 +79,7 @@ def main():
     download_dataset_from_gdrive()
     download_model_from_gdrive()
 
-    # Show folder tree to confirm structure
+    # Show folder tree
     st.subheader("📁 Dataset Folder Structure")
     structure = inspect_folder_structure()
     for line in structure:
@@ -87,14 +96,17 @@ def main():
     # Prepare classes from folder names
     classes = sorted([d.name for d in os.scandir('data') if d.is_dir()])
 
-    # Load model
-    model = load_model(model_path="model.pth", num_classes=len(classes))
+    # Choose loading option
+    load_option = st.sidebar.selectbox("Model Load Option", ["Option 1 (state_dict)", "Option 2 (full model)"])
+    if load_option == "Option 1 (state_dict)":
+        model = load_model_option_1(model_path="model.pth", num_classes=len(classes))
+    else:
+        model = load_model_option_2(model_path="model.pth")
 
     st.sidebar.header("🔧 Options")
-    st.sidebar.write("Upload an image to classify its land type.")
+    uploaded_file = st.sidebar.file_uploader("Upload an image to classify", type=["jpg", "jpeg", "png"])
 
-    uploaded_file = st.sidebar.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
-    if uploaded_file is not None:
+    if uploaded_file is not None and model:
         image = Image.open(uploaded_file).convert('RGB')
         st.image(image, caption="Uploaded Image", use_column_width=True)
 
@@ -102,11 +114,10 @@ def main():
         with torch.no_grad():
             outputs = model(input_tensor)
             _, preds = torch.max(outputs, 1)
-            predicted_class = classes[preds.item()]
+            predicted_class = classes[preds.item()] if preds.item() < len(classes) else "Unknown"
 
         st.subheader("🖼️ Prediction")
-        st.write(f"**{predicted_class}**")
+        st.write(f"**Predicted Class:** {predicted_class}")
 
-# Correct Python main guard
 if __name__ == "__main__":
     main()
