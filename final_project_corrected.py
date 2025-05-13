@@ -16,6 +16,10 @@ if not os.path.exists(extract_to):
 else:
     st.info("Dataset already exists.")
 
+1.5 Download model from Google Drive
+
+@st.cache_resource def download_model_from_gdrive(): model_path = "model.pth" if not os.path.exists(model_path): file_id = "1VtxQwcYy_-fPccAVfIQI6VQDEdXhwkol" url = f"https://drive.google.com/uc?id={file_id}" gdown.download(url, model_path, quiet=False)
+
 2. Inspect folder structure
 
 @st.cache def inspect_folder_structure(path="data"): tree = [] for root, dirs, files in os.walk(path): level = root.replace(path, "").count(os.sep) indent = "  " * level tree.append(f"{indent}{os.path.basename(root)}/") for f in files: tree.append(f"{indent}  {f}") return tree
@@ -28,8 +32,9 @@ else:
 
 def main(): st.title("🌍 Land Type Classifier")
 
-# Download and prepare data
+# Download and prepare data and model
 download_dataset_from_gdrive()
+download_model_from_gdrive()
 
 # Show folder tree to confirm structure
 st.subheader("📁 Dataset Folder Structure")
