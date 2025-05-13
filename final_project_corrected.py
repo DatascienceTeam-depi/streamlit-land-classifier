@@ -1,4 +1,11 @@
-import os import zipfile import streamlit as st from PIL import Image import torch import torch.nn as nn from torchvision import transforms, models import gdown
+import os
+import zipfile
+import streamlit as st
+from PIL import Image
+import torch
+import torch.nn as nn
+from torchvision import transforms, models
+import gdown
 
 1. Download and extract dataset from Google Drive
 
